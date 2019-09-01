@@ -28,6 +28,14 @@ namespace CustomerAccountServer.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
+            Log.Debug("testing Serilog Debug level logging....");
+            Log.Information("testing Serilog Information level logging....");
+            Log.Warning("testing Serilog Warning level logging....");
+            Log.Error("testing Serilog Error level logging....");
+            Log.Fatal("testing Serilog Fatal level logging....");
+            Log.Verbose("testing Serilog Verbose level logging....");
+            Log.Write(LogEventLevel.Warning, "Am writing a warning log to the console");
+
             return "value";
         }
 

@@ -11,7 +11,7 @@
             {
               "Name": "File",
               "Args": {
-                "path": "G:logFile.txt",
+                "path": "C:logFile.txt",
                 "rollingInterval": "Day",
                 "retainedFileCountLimit": 7,
                 "buffered": true
