@@ -23,6 +23,8 @@ namespace CustomerAccountServer
         {
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+            services.ConfigureSqlContext(Configuration);
+            services.ConfigureRepositoryUnitOfWork();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

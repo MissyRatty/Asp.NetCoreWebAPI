@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CustomerAccountServer.Data\CustomerAccountServer.Data.csproj" />
+    <ProjectReference Include="..\CustomerAccountServer.BLL\CustomerAccountServer.BLL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
