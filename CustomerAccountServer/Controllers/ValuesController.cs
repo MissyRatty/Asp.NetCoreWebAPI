@@ -34,24 +34,16 @@ namespace CustomerAccountServer.Controllers
             var account2 = _repositoryUnitOfWork.Account.FindAllByCondition(account => account.CustomerId.Equals(2));
 
             var customers = _repositoryUnitOfWork.Customer.FindAll();
-            var customer1 = _repositoryUnitOfWork.Customer.FindAllByCondition(customer => customer.CustomerId.Equals(1));
-            var customer2 = _repositoryUnitOfWork.Customer.FindAllByCondition(customer => customer.CustomerId.Equals(2));
+            var customer1 = _repositoryUnitOfWork.Customer.FindAllByCondition(customer => customer.Id.Equals(1));
+            var customer2 = _repositoryUnitOfWork.Customer.FindAllByCondition(customer => customer.Id.Equals(2));
 
-            string[] AllAccounts = new string[6];
+            string[] AllAccounts = new string[3];
             int counter = 0;
-            int counter2 = 1;
 
             foreach (var account in accounts)
             {
                 AllAccounts[counter] = account.AccountNumber;
-                counter = counter + 2;
-
-                foreach (var customer in customers)
-                {
-                    AllAccounts[counter2] = customer.CustomerName;
-                    counter2 = counter - 1;
-                }
-             
+                counter++;
             }
 
             return AllAccounts;

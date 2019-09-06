@@ -1,4 +1,4 @@
-﻿using CustomerAccountServer.Data.Models;
+﻿using CustomerAccountServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CustomerAccountServer.Data

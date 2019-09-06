@@ -46,14 +46,19 @@ namespace CustomerAccountServer
             app.UseCors("CorsPolicy");
 
             // Added to forward proxy headers to current request. (needed for linux deployment)
-            app.UseForwardedHeaders(new ForwardedHeadersOptions {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
                 ForwardedHeaders = ForwardedHeaders.All
             });
 
             //helps to use static files for the request. If we don't set a path to the static files, it will use a wwwroot folder in our solution explorer by default.
             app.UseStaticFiles();
 
-
+            //commented code will set the Customer Controller/GetAllCustomers the default.
+            //    routes =>
+            //{
+            //    routes.MapRoute("default", "{controller=Customer}/{action=GetAllCustomers}/{id?}");
+            //}
             app.UseMvc();
         }
     }

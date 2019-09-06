@@ -1,4 +1,4 @@
-﻿using CustomerAccountServer.Data.Models;
+﻿using CustomerAccountServer.Data.Entities;
 
 namespace CustomerAccountServer.BLL.Interfaces
 {

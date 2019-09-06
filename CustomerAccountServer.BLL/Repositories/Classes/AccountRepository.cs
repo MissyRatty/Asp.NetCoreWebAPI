@@ -1,6 +1,6 @@
 ﻿using CustomerAccountServer.BLL.Interfaces;
 using CustomerAccountServer.Data;
-using CustomerAccountServer.Data.Models;
+using CustomerAccountServer.Data.Entities;
 
 namespace CustomerAccountServer.BLL.Classes
 {
