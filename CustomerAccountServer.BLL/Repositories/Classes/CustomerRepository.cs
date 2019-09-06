@@ -14,6 +14,13 @@ namespace CustomerAccountServer.BLL.Classes
         {
         }
 
+        public void CreateCustomer(Customer customer)
+        {
+            //if the customerId column was not Identity(1,1) or autocremented by sql but rather set by us, then we'd have done something like below:
+            //customer.Id = OurNewCustomerId
+            Create(customer);
+        }
+
         public IEnumerable<Customer> GetAllCustomers()
         {
             return FindAll()

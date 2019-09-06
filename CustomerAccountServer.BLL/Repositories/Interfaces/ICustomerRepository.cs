@@ -9,5 +9,6 @@ namespace CustomerAccountServer.BLL.Interfaces
         IEnumerable<Customer> GetAllCustomers();
         Customer GetCustomerById(int customerId);
         CustomerExtended GetCustomerWithDetails(int customerId);
+        void CreateCustomer(Customer customer);
     }
 }

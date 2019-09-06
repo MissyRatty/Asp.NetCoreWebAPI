@@ -1,4 +1,5 @@
 ﻿using CustomerAccountServer.BLL.Interfaces;
+using CustomerAccountServer.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
@@ -40,6 +41,8 @@ namespace CustomerAccountServer.Controllers
         }
 
         //[Route("getcustomerbyid/{customerId}")]
+        //we are setting the name for the action
+        //[HttpGet("{customerId}", Name = "CustomerById")]
         [HttpGet("{customerId}")]
         public IActionResult GetCustomerById(int customerId)
         {
@@ -91,6 +94,36 @@ namespace CustomerAccountServer.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpPost()]
+        public IActionResult CreateCustomer([FromBody]Customer customer)
+        {
+            try
+            {
+                if (customer == null)
+                {
+                    Log.Error("Customer object sent from client is null.");
+                    return BadRequest("Customer object is null");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    Log.Error("Invalid customer object sent from client.");
+                    return BadRequest("Invalid model object");
+                }
+
+                _repositoryUnitOfWork.Customer.CreateCustomer(customer);
+                _repositoryUnitOfWork.Save();
+
+                return CreatedAtRoute("GetCustomerById", new { customer.Id }, customer);
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Something went wrong inside CreateCustomer action: {exception.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
 
     }
 }
