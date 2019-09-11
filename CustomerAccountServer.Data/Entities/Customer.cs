@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CustomerAccountServer.Data.Entities
 {
     [Table("Customer")]
-    public class Customer
+    public class Customer : IEntity
     {
         [Key]
         [Column("CustomerId")]

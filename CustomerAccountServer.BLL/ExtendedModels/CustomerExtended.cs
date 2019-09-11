@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CustomerAccountServer.BLL.ExtendedModels
 {
-    public class CustomerExtended
+    public class CustomerExtended : IEntity
     {
         public CustomerExtended(Customer customer)
         {

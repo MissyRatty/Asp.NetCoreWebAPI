@@ -10,5 +10,7 @@ namespace CustomerAccountServer.BLL.Interfaces
         Customer GetCustomerById(int customerId);
         CustomerExtended GetCustomerWithDetails(int customerId);
         void CreateCustomer(Customer customer);
+        void UpdateCustomer(Customer dbCustomer, Customer customer);
+        void DeleteCustomer(Customer customer);
     }
 }

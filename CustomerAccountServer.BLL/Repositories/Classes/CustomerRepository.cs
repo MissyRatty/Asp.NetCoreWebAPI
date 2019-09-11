@@ -4,6 +4,7 @@ using CustomerAccountServer.BLL.ExtendedModels;
 using CustomerAccountServer.BLL.Interfaces;
 using CustomerAccountServer.Data;
 using CustomerAccountServer.Data.Entities;
+using CustomerAccountServer.Data.Helpers;
 
 namespace CustomerAccountServer.BLL.Classes
 {
@@ -44,6 +45,20 @@ namespace CustomerAccountServer.BLL.Classes
                 Accounts = RepositoryContext.Accounts
                 .Where(account => account.CustomerId.Equals(customerId))
             };
+        }
+
+        public void UpdateCustomer(Customer dbCustomer, Customer customer)
+        {
+            //update customer object
+            dbCustomer.Map(customer);
+
+            //pass the updated customer object to db repository.
+            Update(dbCustomer);
+        }
+
+        public void DeleteCustomer(Customer customer)
+        {
+            Delete(customer);
         }
     }
 }

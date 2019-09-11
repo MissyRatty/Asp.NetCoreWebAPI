@@ -1,8 +1,10 @@
 ﻿using CustomerAccountServer.BLL.Interfaces;
 using CustomerAccountServer.Data.Entities;
+using CustomerAccountServer.Data.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
+using System.Linq;
 
 namespace CustomerAccountServer.Controllers
 {
@@ -29,12 +31,14 @@ namespace CustomerAccountServer.Controllers
             {
                 var customers = _repositoryUnitOfWork.Customer.GetAllCustomers();
                 Log.Information("Returned all customers from database.");
+
                 //for status code 200 = OK
                 return Ok(customers);
             }
             catch (Exception exception)
             {
                 Log.Error($"Something went wrong inside GetAllCustomers action: {exception.Message}");
+
                 //for internal server error = 500
                 return StatusCode(500, "Internal server error");
             }
@@ -42,15 +46,15 @@ namespace CustomerAccountServer.Controllers
 
         //[Route("getcustomerbyid/{customerId}")]
         //we are setting the name for the action
-        //[HttpGet("{customerId}", Name = "CustomerById")]
-        [HttpGet("{customerId}")]
+        [HttpGet("{customerId}", Name = "CustomerById")]
+        // [HttpGet("{customerId}")]
         public IActionResult GetCustomerById(int customerId)
         {
             try
             {
                 var customer = _repositoryUnitOfWork.Customer.GetCustomerById(customerId);
 
-                if (customer.Id.Equals(default))
+                if (customer.IsObjectEmpty())
                 {
                     Log.Error($"Customer with id: {customerId}, has not been found in db.");
                     return NotFound();
@@ -76,7 +80,7 @@ namespace CustomerAccountServer.Controllers
             {
                 var customer = _repositoryUnitOfWork.Customer.GetCustomerWithDetails(customerId);
 
-                if (customer.Id.Equals(default))
+                if (customer.IsObjectEmpty())
                 {
                     Log.Error($"Customer with id: {customerId}, has not been found in database.");
                     return NotFound();
@@ -95,12 +99,16 @@ namespace CustomerAccountServer.Controllers
             }
         }
 
-        [HttpPost()]
+        //use "[FromBody]" attribute to collect data from Request body and not URI
+        //useful when the object is of a complex type.
+        //if you wanted to take your data from the URI, then you could use "[FromUri]" attribute instead.
+        //use [FromBody] instead of [FromUri] for security and data object complexity purposes.
+        [HttpPost]
         public IActionResult CreateCustomer([FromBody]Customer customer)
         {
             try
             {
-                if (customer == null)
+                if (customer.IsObjectNull())
                 {
                     Log.Error("Customer object sent from client is null.");
                     return BadRequest("Customer object is null");
@@ -115,7 +123,8 @@ namespace CustomerAccountServer.Controllers
                 _repositoryUnitOfWork.Customer.CreateCustomer(customer);
                 _repositoryUnitOfWork.Save();
 
-                return CreatedAtRoute("GetCustomerById", new { customer.Id }, customer);
+                //doing CreatedAtRoute, so the response will return the newly created customer object.
+                return CreatedAtRoute("CustomerById", new { customerId = customer.Id }, customer);
             }
             catch (Exception exception)
             {
@@ -124,7 +133,76 @@ namespace CustomerAccountServer.Controllers
             }
         }
 
+        //This receives two parameters: id of the entity you want to update and the entity with the updated fields, taken from the request body.
+        [HttpPut("{customerId}")]
+        public IActionResult UpdateCustomer(int customerId, [FromBody]Customer customer)
+        {
+            try
+            {
+                if (customer.IsObjectNull())
+                {
+                    Log.Error("Customer object sent from client is null.");
+                    return BadRequest("Customer object is null");
+                }
 
+                if (!ModelState.IsValid)
+                {
+                    Log.Error("Invalid customer object sent from client.");
+                    return BadRequest("Invalid model object");
+                }
+
+                var dbCustomer = _repositoryUnitOfWork.Customer.GetCustomerById(customerId);
+                if (dbCustomer.IsObjectEmpty())
+                {
+                    Log.Error($"Customer with id {customerId}, was not found in the database.");
+                    return NotFound();
+                }
+
+                _repositoryUnitOfWork.Customer.UpdateCustomer(dbCustomer, customer);
+                _repositoryUnitOfWork.Save();
+
+                //Status code 204
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Something went wrong inside UpdateCustomer action: {exception.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{customerId}")]
+        public IActionResult DeleteCustomer(int customerId)
+        {
+            try
+            {
+                var customer = _repositoryUnitOfWork.Customer.GetCustomerById(customerId);
+                var customerAccounts = _repositoryUnitOfWork.Account.AccountsByCustomer(customerId);
+
+                if (customer.IsObjectEmpty())
+                {
+                    Log.Error($"Customer with id: {customerId} hasn't been found in database.");
+                    return NotFound();
+                }
+
+                //Can't delete a customer with Account records(Foreign key constraints)
+                if (customerAccounts.Any())
+                {
+                    Log.Error($"Cannot delete customer with id: {customerId}. This customer has related accounts. You may have to delete those accounts first.");
+                    return BadRequest("Cannot delete customer. It has related accounts. Please delete those accounts first.");
+                }
+
+                _repositoryUnitOfWork.Customer.DeleteCustomer(customer);
+                _repositoryUnitOfWork.Save();
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Something went wrong inside DeleteCustomer action: {exception.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
 
