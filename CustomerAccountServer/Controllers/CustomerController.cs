@@ -20,7 +20,6 @@ namespace CustomerAccountServer.Controllers
             _repositoryUnitOfWork = repositoryUnitOfWork;
         }
 
-
         //if there's no route attribute on this action
         // the api endpoint for this action will default to api/customer
         //[Route("getallcustomers")]
